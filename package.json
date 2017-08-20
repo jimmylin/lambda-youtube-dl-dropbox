@@ -1,0 +1,16 @@
+{
+  "name": "node-dropbox",
+  "version": "1.0.0",
+  "description": "Test file upload to dropbox",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jimmy Lin",
+  "license": "ISC",
+  "dependencies": {
+    "dropbox": "^2.5.7",
+    "replace-ext": "^1.0.0",
+    "youtube-dl": "^1.11.1"
+  }
+}
