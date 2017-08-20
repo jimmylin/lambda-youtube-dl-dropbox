@@ -12,7 +12,7 @@ exports.handler = (event, context, callback) => {
   var youtubedl = require('youtube-dl');
   var video = youtubedl(url,
     // Optional arguments passed to youtube-dl. 
-    ['-x', '--audio-format', 'mp3'],
+    ['-x', '--audio-format', 'mp3', '--cache-dir', '/tmp/youtube-dl-cache'],
     // Additional options can be given for calling `child_process.execFile()`. 
     { cwd: __dirname });
  
@@ -26,23 +26,26 @@ exports.handler = (event, context, callback) => {
   video.pipe(fs.createWriteStream('/tmp/mysong.mp3'));
 
   video.on('end', function() {
-    var dbx = new Dropbox({ accessToken: <<DROPBOX ACCESS TOKEN>> });
+    uploadtoDropbox(myfilename, callback);
+  });
+};
 
-    fs.readFile(path.join('/tmp/mysong.mp3'), function (err, contents) {
+function uploadtoDropbox(path, callback) {
+  let dropbox = new Dropbox({ accessToken: process.env.DROPBOX_API_KEY });
+
+  fs.readFile('/tmp/mysong.mp3', function (err, contents) {
+    
     if (err) {
       console.log('Error: ', err);
     }
 
-    // This uploads basic.js to the root of your dropbox
-    dbx.filesUpload({ path: replaceExt(myfilename, '.mp3'), contents: contents, mode: 'overwrite' })
-      .then(function (response) {
-        console.log(response);
-        callback(null, 'Success, file uploaded!!');
-      })
-      .catch(function (err) {
-        console.log(err);
-        callback(err);
-      });
+    // This uploads your file to the root of your dropbox. It also changes the extension to mp3.
+    dropbox.filesUpload({ path: replaceExt(path, '.mp3'), contents: contents, mode: 'overwrite' })
+    .then(function (response) {
+      callback(null, {"statusCode": 200, "body": `${response.name} was successfully uploaded to dropbox.`})
+    })
+    .catch(function (err) {
+      callback(err);
     });
   });
-};
+}
