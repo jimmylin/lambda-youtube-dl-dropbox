@@ -7,8 +7,8 @@ let myfilename = 'error.mp3';
 exports.handler = (event, context, callback) => {
   const url = 'http://www.youtube.com/watch?v=' + event.queryStringParameters.url;
 
-  let youtubedl = require('youtube-dl');
-  let video = youtubedl(url,
+  const youtubedl = require('youtube-dl');
+  const video = youtubedl(url,
     // Optional arguments passed to youtube-dl. 
     ['-x', '--audio-format', 'mp3', '--cache-dir', '/tmp/youtube-dl-cache'],
     // Additional options can be given for calling `child_process.execFile()`. 
@@ -16,7 +16,7 @@ exports.handler = (event, context, callback) => {
  
   // Will be called when the download starts. 
   video.on('info', function(info) {
-    console.log('Download started');
+    console.info('Download started');
     // TODO: Put check in here to prevent download if duration is deemed too long.
     myfilename = '/' + info._filename;
   });
@@ -34,7 +34,7 @@ function uploadtoDropbox(path, callback) {
   fs.readFile('/tmp/mysong.mp3', function (err, contents) {
     
     if (err) {
-      console.log('Error: ', err);
+      console.error('Error: ', err);
     }
 
     // This uploads your file to the root of your dropbox. It also changes the extension to mp3.
