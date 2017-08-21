@@ -1,16 +1,14 @@
 'use strict';
-var Dropbox = require('./node_modules/dropbox');
-var fs = require('fs');
-var path = require('path');
-var replaceExt = require('replace-ext');
-var myfilename = 'error.mp3';
+const Dropbox = require('./node_modules/dropbox');
+const fs = require('fs');
+const replaceExt = require('replace-ext');
+let myfilename = 'error.mp3';
 
 exports.handler = (event, context, callback) => {
+  const url = 'http://www.youtube.com/watch?v=' + event.queryStringParameters.url;
 
-  let url = 'http://www.youtube.com/watch?v=' + event.queryStringParameters.url;
-
-  var youtubedl = require('youtube-dl');
-  var video = youtubedl(url,
+  let youtubedl = require('youtube-dl');
+  let video = youtubedl(url,
     // Optional arguments passed to youtube-dl. 
     ['-x', '--audio-format', 'mp3', '--cache-dir', '/tmp/youtube-dl-cache'],
     // Additional options can be given for calling `child_process.execFile()`. 
@@ -31,7 +29,7 @@ exports.handler = (event, context, callback) => {
 };
 
 function uploadtoDropbox(path, callback) {
-  let dropbox = new Dropbox({ accessToken: process.env.DROPBOX_API_KEY });
+  const dropbox = new Dropbox({ accessToken: process.env.DROPBOX_API_KEY });
 
   fs.readFile('/tmp/mysong.mp3', function (err, contents) {
     
